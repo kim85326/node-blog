@@ -3,13 +3,50 @@ var router = express.Router();
 var firebaseAdminDb = require("../connections/firebase_admin");
 
 const categoriesRef = firebaseAdminDb.ref("categories");
+const articlesRef = firebaseAdminDb.ref("articles");
 
 router.get("/archives", function(req, res) {
     res.render("dashboard/archives", { title: "Express" });
 });
 
-router.get("/article", function(req, res) {
-    res.render("dashboard/article", { title: "Express" });
+router.get("/articles/create", function(req, res) {
+    categoriesRef.once("value", function(snapshot) {
+        const categories = snapshot.val();
+        res.render("dashboard/article", { categories });
+    });
+});
+
+router.get("/articles/:id", function(req, res) {
+    const id = req.param("id");
+    let categories;
+    categoriesRef
+        .once("value", function(snapshot) {
+            categories = snapshot.val();
+        })
+        .then(() => {
+            return articlesRef.child(id).once("value");
+        })
+        .then((snapshot) => {
+            let article = snapshot.val();
+            res.render("dashboard/article", { article, categories });
+        });
+});
+
+router.post("/articles/create", function(req, res) {
+    const data = req.body;
+    const articleRef = articlesRef.push();
+    const id = articleRef.key;
+    articleRef
+        .set({
+            title: data.title,
+            content: data.content,
+            status: data.status,
+            category: data.category,
+            updateTime: Math.floor(Date.now() / 1000),
+        })
+        .then(() => {
+            res.redirect(`/dashboard/articles/${id}`);
+        });
 });
 
 router.get("/categories", function(req, res) {
