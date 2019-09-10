@@ -21,12 +21,12 @@ router.get("/archives", function(req, res) {
             const articles = [];
             snapshot.forEach((snapshotChild) => {
                 const article = snapshotChild.val();
+                article.id = snapshotChild.key;
                 if (article.status === status) {
                     articles.push(article);
                 }
             });
             articles.reverse();
-            console.log(categories);
             res.render("dashboard/archives", {
                 articles,
                 categories,
@@ -93,6 +93,16 @@ router.post("/articles/update/:id", function(req, res) {
         })
         .then(() => {
             res.redirect(`/dashboard/articles/${id}`);
+        });
+});
+
+router.post("/articles/delete/:id", function(req, res) {
+    const id = req.param("id");
+    articlesRef
+        .child(id)
+        .remove()
+        .then(() => {
+            res.send("文章已刪除");
         });
 });
 
