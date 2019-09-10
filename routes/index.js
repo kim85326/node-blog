@@ -29,8 +29,22 @@ router.get("/", function(req, res, next) {
         });
 });
 
-router.get("/post", function(req, res, next) {
-    res.render("post", { title: "Express" });
+router.get("/post/:id", function(req, res, next) {
+    const id = req.param("id");
+
+    let categories;
+    categoriesRef
+        .once("value")
+        .then((snapshot) => {
+            categories = snapshot.val();
+            return articlesRef.child(id).once("value");
+        })
+        .then((snapshot) => {
+            const article = snapshot.val();
+            article.id = snapshot.key;
+
+            res.render("post", { article, categories, striptags, moment });
+        });
 });
 
 module.exports = router;
