@@ -3,6 +3,7 @@ var striptags = require("striptags");
 var moment = require("moment");
 var firebaseAdminDb = require("../connections/firebase_admin");
 var router = express.Router();
+var convertPagination = require("../modules/convertPagination");
 
 const categoriesRef = firebaseAdminDb.ref("categories");
 const articlesRef = firebaseAdminDb.ref("articles");
@@ -30,29 +31,17 @@ router.get("/", function(req, res, next) {
 
             articles.reverse();
 
-            const totalCount = articles.length;
-            const perPages = 3;
-            const totalPages = Math.ceil(totalCount / perPages);
-            if (currentPage > totalPages) {
-                currentPage = totalPages;
-            }
-
-            const startItemIndex = (currentPage - 1) * 3;
-            const endItemIndex = currentPage * 3 - 1;
-
-            const filterArticles = articles.filter(function(article, i) {
-                return i >= startItemIndex && i <= endItemIndex;
-            });
+            const {
+                filterItems: filterArticles,
+                pagination,
+            } = convertPagination(articles, currentPage);
 
             res.render("index", {
                 articles: filterArticles,
                 categories,
                 striptags,
                 moment,
-                totalPages,
-                currentPage,
-                hasPreviousPage: currentPage > 1,
-                hasNextPage: currentPage < totalPages,
+                pagination,
             });
         });
 });
