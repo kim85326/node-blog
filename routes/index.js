@@ -8,6 +8,8 @@ const categoriesRef = firebaseAdminDb.ref("categories");
 const articlesRef = firebaseAdminDb.ref("articles");
 
 router.get("/", function(req, res, next) {
+    const currentPage = req.query.page || 1;
+
     let categories;
     categoriesRef
         .once("value")
@@ -25,7 +27,33 @@ router.get("/", function(req, res, next) {
                     articles.push(article);
                 }
             });
-            res.render("index", { articles, categories, striptags, moment });
+
+            articles.reverse();
+
+            const totalCount = articles.length;
+            const perPages = 3;
+            const totalPages = Math.ceil(totalCount / perPages);
+            if (currentPage > totalPages) {
+                currentPage = totalPages;
+            }
+
+            const startItemIndex = (currentPage - 1) * 3;
+            const endItemIndex = currentPage * 3 - 1;
+
+            const filterArticles = articles.filter(function(article, i) {
+                return i >= startItemIndex && i <= endItemIndex;
+            });
+
+            res.render("index", {
+                articles: filterArticles,
+                categories,
+                striptags,
+                moment,
+                totalPages,
+                currentPage,
+                hasPreviousPage: currentPage > 1,
+                hasNextPage: currentPage < totalPages,
+            });
         });
 });
 
