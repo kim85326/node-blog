@@ -11,13 +11,14 @@
                 </tr>
             </thead>
             <tbody>
+                <% for(var key in categories) { %>
                 <tr>
-                    <td class="align-middle">心得</td>
+                    <td class="align-middle"><%- categories[key].name %></td>
                     <td>
                         <input
                             type="text"
                             class="form-control form-control-sm"
-                            value="mind"
+                            value="<%- categories[key].path %>"
                         />
                     </td>
                     <td class="align-middle">
@@ -31,6 +32,7 @@
                         </form>
                     </td>
                 </tr>
+                <% } %>
             </tbody>
         </table>
 

@@ -13,7 +13,12 @@ router.get("/article", function(req, res) {
 });
 
 router.get("/categories", function(req, res) {
-    res.render("dashboard/categories", { title: "Express" });
+    categoriesRef.once("value", function(snapshot) {
+        const categories = snapshot.val();
+        res.render("dashboard/categories", {
+            categories,
+        });
+    });
 });
 
 router.post("/categories/create", function(req, res) {
@@ -22,7 +27,7 @@ router.post("/categories/create", function(req, res) {
     categoriesRef
         .push({
             name: requestBody.name,
-            path: requestBody.path
+            path: requestBody.path,
         })
         .then(() => {
             res.redirect("/dashboard/categories");
