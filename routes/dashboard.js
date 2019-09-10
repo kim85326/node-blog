@@ -13,10 +13,12 @@ router.get("/article", function(req, res) {
 });
 
 router.get("/categories", function(req, res) {
+    const messages = req.flash("info");
     categoriesRef.once("value", function(snapshot) {
         const categories = snapshot.val();
         res.render("dashboard/categories", {
             categories,
+            messages,
         });
     });
 });
@@ -40,6 +42,7 @@ router.post("/categories/delete/:id", function(req, res) {
         .child(id)
         .remove()
         .then(() => {
+            req.flash("info", "欄位已刪除");
             res.redirect("/dashboard/categories");
         });
 });
