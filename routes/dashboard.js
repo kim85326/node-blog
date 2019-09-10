@@ -27,12 +27,23 @@ router.post("/categories/create", function(req, res) {
     const requestBody = req.body;
 
     categoriesRef
-        .push({
-            name: requestBody.name,
-            path: requestBody.path,
-        })
-        .then(() => {
-            res.redirect("/dashboard/categories");
+        .orderByChild("path")
+        .equalTo(requestBody.path)
+        .once("value")
+        .then(function(snapshot) {
+            if (snapshot.val() !== null) {
+                req.flash("info", "已有相同路徑");
+                res.redirect("/dashboard/categories");
+            } else {
+                categoriesRef
+                    .push({
+                        name: requestBody.name,
+                        path: requestBody.path,
+                    })
+                    .then(() => {
+                        res.redirect("/dashboard/categories");
+                    });
+            }
         });
 });
 
