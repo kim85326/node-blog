@@ -1,4 +1,6 @@
 var express = require("express");
+var moment = require("moment");
+var striptags = require("striptags");
 var router = express.Router();
 var firebaseAdminDb = require("../connections/firebase_admin");
 
@@ -6,7 +8,27 @@ const categoriesRef = firebaseAdminDb.ref("categories");
 const articlesRef = firebaseAdminDb.ref("articles");
 
 router.get("/archives", function(req, res) {
-    res.render("dashboard/archives", { title: "Express" });
+    let categories = {};
+    categoriesRef
+        .once("value")
+        .then((snapshot) => {
+            categories = snapshot.val();
+            return articlesRef.orderByChild("updateTime").once("value");
+        })
+        .then((snapshot) => {
+            const articles = [];
+            snapshot.forEach((snapshotChild) => {
+                articles.push(snapshotChild.val());
+            });
+            articles.reverse();
+            console.log(categories);
+            res.render("dashboard/archives", {
+                articles,
+                categories,
+                moment,
+                striptags,
+            });
+        });
 });
 
 router.get("/articles/create", function(req, res) {
