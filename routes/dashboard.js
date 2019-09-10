@@ -34,4 +34,14 @@ router.post("/categories/create", function(req, res) {
         });
 });
 
+router.post("/categories/delete/:id", function(req, res) {
+    const id = req.param("id");
+    categoriesRef
+        .child(id)
+        .remove()
+        .then(() => {
+            res.redirect("/dashboard/categories");
+        });
+});
+
 module.exports = router;
