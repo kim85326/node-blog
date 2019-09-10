@@ -28,6 +28,7 @@ router.get("/articles/:id", function(req, res) {
         })
         .then((snapshot) => {
             let article = snapshot.val();
+            article.id = id;
             res.render("dashboard/article", { article, categories });
         });
 });
@@ -38,6 +39,24 @@ router.post("/articles/create", function(req, res) {
     const id = articleRef.key;
     articleRef
         .set({
+            title: data.title,
+            content: data.content,
+            status: data.status,
+            category: data.category,
+            updateTime: Math.floor(Date.now() / 1000),
+        })
+        .then(() => {
+            res.redirect(`/dashboard/articles/${id}`);
+        });
+});
+
+router.post("/articles/update/:id", function(req, res) {
+    const id = req.param("id");
+    const data = req.body;
+
+    articlesRef
+        .child(id)
+        .update({
             title: data.title,
             content: data.content,
             status: data.status,
