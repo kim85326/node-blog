@@ -47,7 +47,9 @@ app.use("/dashboard", authCheck, dashboardRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-    next(createError(404));
+    var error = new Error("Not Found");
+    error.status = 404;
+    res.render("error", { title: "您所查看的頁面不存在 QQ" });
 });
 
 // error handler
