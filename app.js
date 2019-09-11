@@ -8,6 +8,7 @@ var flash = require("connect-flash");
 
 var indexRouter = require("./routes/index");
 var dashboardRouter = require("./routes/dashboard");
+var authRouter = require("./routes/auth");
 
 var app = express();
 
@@ -32,8 +33,17 @@ app.use(
 );
 app.use(flash());
 
+const authCheck = (req, res, next) => {
+    console.log(req.session.uid);
+    if (req.session.uid === process.env.ADMIN_UID) {
+        return next();
+    }
+    return res.redirect("/auth/signin");
+};
+
 app.use("/", indexRouter);
-app.use("/dashboard", dashboardRouter);
+app.use("/auth", authRouter);
+app.use("/dashboard", authCheck, dashboardRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

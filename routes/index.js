@@ -1,7 +1,7 @@
 var express = require("express");
 var striptags = require("striptags");
 var moment = require("moment");
-var firebaseAdminDb = require("../connections/firebase_admin");
+var firebaseAdminDb = require("../connections/firebaseAdminConnection");
 var router = express.Router();
 var convertPagination = require("../modules/convertPagination");
 

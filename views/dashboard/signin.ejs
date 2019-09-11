@@ -1,4 +1,5 @@
 <% extend("../layouts/dashboard-layout") %>
+
 <div class="row justify-content-center">
     <div class="col-sm-6">
         <% if (messages.length > 0) { %> <% for (key in messages) { %>
@@ -6,7 +7,7 @@
             <%- messages[key] %>
         </div>
         <%} %> <%} %>
-        <form method="POST" action="/auth/signup">
+        <form method="POST" action="/auth/signin">
             <div class="form-group">
                 <label for="exampleInputEmail1">Email</label>
                 <input
@@ -32,28 +33,6 @@
                     placeholder="請輸入密碼"
                     required
                 />
-            </div>
-            <div class="form-group">
-                <label for="confirm_password">確認密碼</label>
-                <input
-                    type="password"
-                    class="form-control"
-                    id="confirm_password"
-                    name="confirm_password"
-                    placeholder="確認密碼"
-                    required
-                />
-            </div>
-            <div class="form-check">
-                <input
-                    type="checkbox"
-                    class="form-check-input"
-                    id="confirm"
-                    required
-                />
-                <label class="form-check-label" for="confirm"
-                    >請確認你了解這是自己做的 Blog</label
-                >
             </div>
             <div class="text-right mt-3">
                 <button type="submit" class="btn btn-primary">Submit</button>

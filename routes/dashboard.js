@@ -2,10 +2,16 @@ var express = require("express");
 var moment = require("moment");
 var striptags = require("striptags");
 var router = express.Router();
-var firebaseAdminDb = require("../connections/firebase_admin");
+var firebaseAdminDb = require("../connections/firebaseAdminConnection");
+var firebase = require("../connections/firebaseClientConnection");
 
 const categoriesRef = firebaseAdminDb.ref("categories");
 const articlesRef = firebaseAdminDb.ref("articles");
+const firebaseAuth = firebase.auth();
+
+router.get("/", function(req, res) {
+    res.render("dashboard/index");
+});
 
 router.get("/archives", function(req, res) {
     let status = req.query.status || "public";
